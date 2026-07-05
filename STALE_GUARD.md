@@ -73,11 +73,12 @@ Effectiveness didn't hold up at first. That same 2-hop traversal returned 108-11
 
 ```bash
 uv venv --python 3.12 && source .venv/bin/activate
-uv pip install -e ".[anthropic]" -e "."
+uv pip install -e ".[anthropic]" -e "." gradio
 cp .env.template .env   # set LLM_API_KEY
 python stale_guard/demo.py
 python stale_guard/propagation_proof.py
 python stale_guard/scalability_test.py
+python stale_guard/app.py   # interactive Gradio walkthrough
 ```
 
 ## Known limitations
