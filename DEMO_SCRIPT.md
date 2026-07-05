@@ -15,11 +15,11 @@ Beats 1-3 are **live** — real LLM calls, real graph writes, nothing pre-baked.
 **On screen:** terminal running `record_demo.py`, output through the first pause.
 
 **Voiceover:**
-> "Every memory framework — Cognee included — retrieves facts really well. Here's the problem: I tell it two things. First, the user lives in Prague and bikes to work every day. Then, a moment later: the user just moved to Berlin. Now I ask a completely ordinary question — recommend a bike shop near where I live."
+> "Every memory framework, Cognee included, retrieves facts really well. Here's the problem. I tell it two things: first, the user lives in Prague and bikes to work every day. Then, a moment later, the user just moved to Berlin. Now I ask a completely ordinary question: recommend a bike shop near where I live."
 >
 > *(let the baseline answer print)*
 >
-> "Look closely — it asks for 'your location in Prague.' It's still treating Prague as home, even though I told it otherwise in the exact same conversation. Nothing here is technically wrong per se — it's just never checked whether the fact it retrieved is still true."
+> "Look closely, it asks for 'your location in Prague.' It's still treating Prague as home, even though I told it otherwise in the exact same conversation. Nothing here is technically wrong, it just never checked whether the fact it retrieved is still true."
 
 ---
 
@@ -28,15 +28,15 @@ Beats 1-3 are **live** — real LLM calls, real graph writes, nothing pre-baked.
 **On screen:** the two `remember()` calls and their printed verdicts.
 
 **Voiceover:**
-> "Now the same two facts, through STALE-Guard. Every time something's remembered, a write-time judge checks it against what's already stored — using real graph traversal, not just keyword matching, which matters for cases we'll get to in a second."
+> "Now the same two facts, through STALE-Guard. Every time something's remembered, a write-time judge checks it against what's already stored, using real graph traversal, not just keyword matching. That matters for cases we'll get to in a second."
 >
 > *(first remember — nothing to compare against yet, say so quickly)*
 >
-> "First fact, nothing to check yet. Now the Berlin fact —"
+> "First fact, nothing to check yet. Now the Berlin fact."
 >
 > *(let the verdict print)*
 >
-> "— STALE. Moving to Berlin directly contradicts living in Prague. Nothing gets deleted — Cognee's graph is append-only by design — it just gets marked, with a reason and what replaced it, auditable, not just a black-box flag."
+> "STALE. Moving to Berlin directly contradicts living in Prague. Nothing gets deleted, Cognee's graph is append-only by design, it just gets marked, with a reason and what replaced it. Auditable, not a black-box flag."
 
 ---
 
