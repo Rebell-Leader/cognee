@@ -1,0 +1,107 @@
+{
+  "target_fact": "The user commutes to work by bicycle every day.",
+  "trigger_fact": "The user broke their leg yesterday in a skiing accident.",
+  "n_noise_facts": 15,
+  "semantic_judgements": [
+    {
+      "node_id": "de1ff521-2448-5fdf-b877-406c5db2e4f6",
+      "old_text": "The user's friend broke an arm snowboarding last month.",
+      "new_text": "The user broke their leg yesterday in a skiing accident.",
+      "source": "semantic",
+      "refuted": false,
+      "verdict": "KEEP",
+      "conflict_type": "none",
+      "reason": "The new observation concerns the user breaking a leg, which does not directly contradict or invalidate the friend\u2019s separate arm injury snowboarding last month.",
+      "superseded_by": null
+    },
+    {
+      "node_id": "460a3173-3ce7-511c-b426-6574e934db0a",
+      "old_text": "The user's cousin also broke a leg skiing two winters ago.",
+      "new_text": "The user broke their leg yesterday in a skiing accident.",
+      "source": "semantic",
+      "refuted": false,
+      "verdict": "STALE",
+      "conflict_type": "type2_propagated",
+      "reason": "NEW_OBSERVATION shifts the relevant leg-breaking event from the cousin two winters ago to the user yesterday, which implicitly undermines the earlier presumed context of the user's leg injury timeline.",
+      "superseded_by": "The user broke their leg yesterday in a skiing accident.",
+      "refutation_reason": "Even if the user broke their leg yesterday, that does not contradict the separate fact that their cousin broke a leg two winters ago; the proposed reason only changes the user\u2019s personal timeline and doesn\u2019t logically invalidate the cousin-specific memory."
+    },
+    {
+      "node_id": "ceb5222d-f751-5f76-b12b-2a53536016b5",
+      "old_text": "The user sprained their ankle while skiing two years ago.",
+      "new_text": "The user broke their leg yesterday in a skiing accident.",
+      "source": "semantic",
+      "refuted": true,
+      "verdict": "STALE",
+      "conflict_type": "type2_propagated",
+      "reason": "The new observation indicates a more severe skiing injury happened recently, which implicitly undermines the specific prior claim about the ankle sprain as the relevant skiing injury history.",
+      "superseded_by": "The user broke their leg yesterday in a skiing accident.",
+      "refutation_reason": "OLD_MEMORY (ankle sprain two years ago) could still be true even if a new, more severe skiing injury (broken leg yesterday) occurred, since the two injuries are separate events and the newer observation doesn\u2019t logically negate or overwrite the earlier one."
+    },
+    {
+      "node_id": "fc33acc9-dee4-567f-887b-153dd0f119ea",
+      "old_text": "The user has an old scar on their leg from a skiing fall years ago.",
+      "new_text": "The user broke their leg yesterday in a skiing accident.",
+      "source": "semantic",
+      "refuted": true,
+      "verdict": "STALE",
+      "conflict_type": "type2_propagated",
+      "reason": "The new observation indicates a recent leg injury from skiing yesterday, which implicitly overwrites the older timeline and detail about the scar being the only/earlier skiing-related incident.",
+      "superseded_by": null,
+      "refutation_reason": "A recent skiing break yesterday does not contradict a pre-existing old scar; the new incident can be separate and the scar detail could still remain true unless the system assumes the user had no other prior leg injury."
+    },
+    {
+      "node_id": "5ac22e24-2c61-5a2c-8baa-493700ab24ca",
+      "old_text": "The user has been nervous about leg injuries since a childhood skiing fall.",
+      "new_text": "The user broke their leg yesterday in a skiing accident.",
+      "source": "semantic",
+      "refuted": false,
+      "verdict": "STALE",
+      "conflict_type": "type2_propagated",
+      "reason": "Breaking the leg yesterday in a skiing accident makes the old, long-standing concern stemming from a childhood fall no longer the valid basis for the user's current injury-related nervousness.",
+      "superseded_by": null,
+      "refutation_reason": "Because NEW_OBSERVATION indicates the user has a fresh, direct leg injury event (yesterday), it\u2019s not plausible that the *specific basis* of their current nervousness is still the childhood skiing fall as described in OLD_MEMORY; that older causal link is displaced by the new incident."
+    }
+  ],
+  "propagation_judgements": [
+    {
+      "node_id": "8de6376b-48df-5db9-a753-19f295c8a0b4",
+      "old_text": "The user watched a documentary about extreme skiing accidents.",
+      "new_text": "The user broke their leg yesterday in a skiing accident.",
+      "source": "propagation",
+      "refuted": true,
+      "verdict": "STALE",
+      "conflict_type": "type2_propagated",
+      "reason": "The new observation indicates a recent real skiing accident causing a leg injury, which makes the prior documentary-watching-only framing of the skiing accident context implicitly outdated.",
+      "superseded_by": "The user broke their leg yesterday in a skiing accident.",
+      "refutation_reason": "The user could have watched a documentary about extreme skiing accidents at some earlier time, and that fact remains true even if yesterday they had a separate real skiing accident that caused a broken leg\u2014so \u201cdocumentary-watching-only framing\u201d isn\u2019t necessarily made invalid by the later injury."
+    },
+    {
+      "node_id": "092eb482-1c90-5d70-95bf-a94427b91c00",
+      "old_text": "The user commutes to work by bicycle every day.",
+      "new_text": "The user broke their leg yesterday in a skiing accident.",
+      "source": "propagation",
+      "refuted": true,
+      "verdict": "STALE",
+      "conflict_type": "type2_propagated",
+      "reason": "The new observation indicates the user has recently been injured, which would invalidate the downstream precondition that they can commute to work by bicycle every day.",
+      "superseded_by": null,
+      "refutation_reason": "OLD_MEMORY says they commute by bicycle every day, and a skiing accident yesterday doesn\u2019t logically rule out that it was still true for the relevant period prior to the injury (e.g., they normally bicycle commute, and the injury may only affect future commutes), so the memory could still reflect past commuting behavior without being invalidated by a one-time injury."
+    }
+  ],
+  "target_judgements": [
+    {
+      "node_id": "092eb482-1c90-5d70-95bf-a94427b91c00",
+      "old_text": "The user commutes to work by bicycle every day.",
+      "new_text": "The user broke their leg yesterday in a skiing accident.",
+      "source": "propagation",
+      "refuted": true,
+      "verdict": "STALE",
+      "conflict_type": "type2_propagated",
+      "reason": "The new observation indicates the user has recently been injured, which would invalidate the downstream precondition that they can commute to work by bicycle every day.",
+      "superseded_by": null,
+      "refutation_reason": "OLD_MEMORY says they commute by bicycle every day, and a skiing accident yesterday doesn\u2019t logically rule out that it was still true for the relevant period prior to the injury (e.g., they normally bicycle commute, and the injury may only affect future commutes), so the memory could still reflect past commuting behavior without being invalidated by a one-time injury."
+    }
+  ],
+  "outcome": "PROVEN: TARGET_FACT was invisible to vector similarity (crowded out by noise) and was only found via graph traversal."
+}

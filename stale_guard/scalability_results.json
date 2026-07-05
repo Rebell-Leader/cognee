@@ -1,0 +1,23 @@
+{
+  "n_filler_facts": 60,
+  "graph_size_nodes": 282,
+  "graph_size_edges": 402,
+  "hub_degrees_top5": [
+    {
+      "id": "d126c4d5-551d-58fa-b1f5-06237bb75075",
+      "name": "user",
+      "degree": 99
+    },
+    {
+      "id": "2a876d22-ce6a-528f-88c8-f8504ae28084",
+      "name": "the user",
+      "degree": 12
+    }
+  ],
+  "t_bulk_add_seconds": 12.39,
+  "t_bulk_cognify_seconds": 22.65,
+  "t_remember_target_seconds": 23.38,
+  "t_remember_trigger_seconds": 20.85,
+  "t_isolated_propagation_lookup_seconds": 0.012,
+  "propagation_candidates_returned": 8
+}

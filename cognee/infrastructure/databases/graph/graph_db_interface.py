@@ -370,6 +370,24 @@ class GraphDBInterface(ABC):
         """
         raise NotImplementedError("set_node_truth_state is not implemented for this adapter")
 
+    async def get_node_stale_state(self, node_ids: List[str]) -> Dict[str, Dict[str, Any]]:
+        """
+        Retrieve implicit-invalidation state (STALE-Guard) for multiple node ids.
+        Returns only found node ids. Each value has keys: ``stale`` (bool),
+        ``verdict`` (str, one of KEEP/STALE/REPLACE/UNKNOWN), ``reason`` (str),
+        ``superseded_by`` (str or None), ``stale_at`` (ISO timestamp or None).
+        """
+        raise NotImplementedError("get_node_stale_state is not implemented for this adapter")
+
+    async def set_node_stale_state(
+        self, node_stale_state: Dict[str, Dict[str, Any]]
+    ) -> Dict[str, bool]:
+        """
+        Persist implicit-invalidation state (STALE-Guard) for multiple node ids.
+        Returns per-id update success.
+        """
+        raise NotImplementedError("set_node_stale_state is not implemented for this adapter")
+
     async def get_edge_feedback_weights(self, edge_object_ids: List[str]) -> Dict[str, float]:
         """
         Retrieve edge feedback weights for multiple edge_object_ids.

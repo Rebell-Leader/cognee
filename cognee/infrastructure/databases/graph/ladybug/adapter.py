@@ -1725,6 +1725,87 @@ class LadybugAdapter(GraphDBInterface):
         updated_ids = await self._execute_node_truth_state_updates(updates)
         return {nid: (nid in updated_ids) for nid in node_ids}
 
+    def _build_node_stale_state_updates(
+        self,
+        nodes: List[Dict[str, Any]],
+        node_stale_state: Dict[str, Dict[str, Any]],
+    ) -> List[Dict[str, Any]]:
+        """Build UNWIND items for node stale-state (STALE-Guard) updates."""
+        updates = []
+        for node in nodes:
+            node_id = node.get("id")
+            if not isinstance(node_id, str) or node_id not in node_stale_state:
+                continue
+            state = node_stale_state[node_id]
+            properties = {
+                k: v
+                for k, v in node.items()
+                if k not in {"id", "name", "type", "created_at", "updated_at"}
+            }
+            properties["stale"] = bool(state.get("stale", False))
+            properties["stale_verdict"] = str(state.get("verdict") or "UNKNOWN")
+            properties["stale_reason"] = str(state.get("reason") or "")
+            properties["stale_superseded_by"] = state.get("superseded_by")
+            properties["stale_at"] = state.get("stale_at")
+            updates.append(
+                {"node_id": node_id, "properties": json.dumps(properties, cls=JSONEncoder)}
+            )
+        return updates
+
+    async def _execute_node_stale_state_updates(self, updates: List[Dict[str, Any]]) -> Set[str]:
+        """Run node stale-state UNWIND/SET; return set of updated node_ids."""
+        if not updates:
+            return set()
+        now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")
+        query = """
+        UNWIND $items AS item
+        MATCH (n:Node)
+        WHERE n.id = item.node_id
+        SET n.properties = item.properties,
+            n.updated_at = timestamp($updated_at)
+        RETURN n.id AS node_id
+        """
+        result = await self.query(query, {"items": updates, "updated_at": now})
+        rows_dicts = self._rows_to_dicts(result, ["node_id"])
+        return {str(r["node_id"]) for r in rows_dicts if r.get("node_id") is not None}
+
+    async def get_node_stale_state(self, node_ids: List[str]) -> Dict[str, Dict[str, Any]]:
+        if not node_ids:
+            return {}
+        valid_node_ids = [node_id for node_id in node_ids if isinstance(node_id, str) and node_id]
+        if not valid_node_ids:
+            return {}
+        nodes = await self.get_nodes(valid_node_ids)
+        result: Dict[str, Dict[str, Any]] = {}
+        for node in nodes:
+            node_id = node.get("id")
+            if not isinstance(node_id, str):
+                continue
+            result[node_id] = {
+                "stale": bool(node.get("stale", False)),
+                "verdict": node.get("stale_verdict") or "UNKNOWN",
+                "reason": node.get("stale_reason") or "",
+                "superseded_by": node.get("stale_superseded_by"),
+                "stale_at": node.get("stale_at"),
+            }
+        return result
+
+    async def set_node_stale_state(
+        self, node_stale_state: Dict[str, Dict[str, Any]]
+    ) -> Dict[str, bool]:
+        if not node_stale_state:
+            return {}
+        node_ids = list(node_stale_state.keys())
+        valid_node_ids = [nid for nid in node_ids if isinstance(nid, str) and nid]
+        if not valid_node_ids:
+            return {nid: False for nid in node_ids}
+        nodes = await self.get_nodes(valid_node_ids)
+        updates = self._build_node_stale_state_updates(nodes, node_stale_state)
+        if not updates:
+            return {nid: False for nid in node_ids}
+        updated_ids = await self._execute_node_stale_state_updates(updates)
+        return {nid: (nid in updated_ids) for nid in node_ids}
+
     async def get_edge_feedback_weights(self, edge_object_ids: List[str]) -> Dict[str, float]:
         if not edge_object_ids:
             return {}

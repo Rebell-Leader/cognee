@@ -125,6 +125,11 @@ _TYPE_COLOR_MAP: Dict[str, str] = {
 _ONTOLOGY_VALID_COLOR = "#FF5CA8"
 _UNKNOWN_TYPE_COLOR = "#DBD8D8"
 
+# STALE-Guard: nodes the State Adjudicator has marked implicitly invalidated
+# (see stale_guard/adjudicator.py). Takes priority over ontology/type color —
+# staleness is the more urgent signal for a viewer to see first.
+_STALE_COLOR = "#E11D48"
+
 
 # Node sets produced by the self-improvement bridge (improve()/distillation).
 # These get stable, meaningful colors in the "color by node set" overlay
@@ -1244,6 +1249,8 @@ def preprocess(graph_data, schema_data: Optional[Dict[str, Any]] = None) -> Prep
         )
         if node_info.get("ontology_valid") is True:
             node_info["color"] = _ONTOLOGY_VALID_COLOR
+        if node_info.get("stale") is True:
+            node_info["color"] = _STALE_COLOR
         # Distilled session-learning nodes get a ring overlay in the renderer
         # (type fill is preserved) so the self-improvement feature is visible.
         node_info["is_memory_learning"] = is_distilled_learning_node(node_info)

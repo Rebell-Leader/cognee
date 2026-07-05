@@ -1,0 +1,504 @@
+{
+  "summary": {
+    "n_scenarios": 13,
+    "baseline_tally": {
+      "correct": 7,
+      "stale": 6,
+      "unclear": 0
+    },
+    "guarded_tally": {
+      "correct": 13,
+      "stale": 0,
+      "unclear": 0
+    },
+    "baseline_correct_pct": 53.8,
+    "guarded_correct_pct": 100.0,
+    "propagation_only_catches": 0,
+    "refuted_verdicts_held_back": 5
+  },
+  "results": [
+    {
+      "id": "location_change",
+      "type": "type1_coreferential",
+      "query": "Recommend me a good bike shop near where I live.",
+      "baseline_answer": "I can\u2019t recommend a specific bike shop nearby from the info provided (it only says you live in **Prague** and commute by bicycle).\n\nWhat\u2019s your **ZIP code or neighborhood/address in Prague**, and what do you need\u2014**repair, tune-up, or a new bike** (and any brands/budget)? Then I\u2019ll suggest nearby bike shops.",
+      "baseline_grade": {
+        "reflects_current_state": false,
+        "corrected_stale_premise": false,
+        "verdict": "stale",
+        "reasoning": "The answer assumes the user still lives in **Prague** (\u201cit only says you live in Prague\u2026\u201d, and asks for a Prague ZIP code/neighborhood), despite the UPDATE that they moved to **Berlin**. It therefore recommends/requests information based on an invalidated location."
+      },
+      "guarded_answer": "I only know that you moved to Berlin last week, so I don\u2019t have enough information to recommend a bike shop *near your specific location* in Berlin. If you share your neighborhood (e.g., Kreuzberg, Prenzlauer Berg) or a nearby landmark, I can suggest options close to you.",
+      "guarded_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": null,
+        "verdict": "correct",
+        "reasoning": "The answer correctly reflects the UPDATE by focusing on Berlin and asking for the user\u2019s specific Berlin neighborhood/landmark to recommend a nearby shop, rather than relying on the outdated Prague commute information."
+      },
+      "premise_warnings": [
+        "\"The user lives in Prague and commutes to work by bicycle every day.\" is OUTDATED (Moving from Prague to Berlin changes the user's place of residence, which invalidates the prior 'lives in Prague' portion of the memory.). Superseded by: The user moved to Berlin last week."
+      ],
+      "judgements": [
+        {
+          "node_id": "3d2cf76c-7637-5361-aa63-a9ed6a451b6b",
+          "old_text": "The user lives in Prague and commutes to work by bicycle every day.",
+          "new_text": "The user just moved to Berlin last week.",
+          "source": "semantic",
+          "refuted": false,
+          "verdict": "STALE",
+          "conflict_type": "type1_coreferential",
+          "reason": "Moving from Prague to Berlin changes the user's place of residence, which invalidates the prior 'lives in Prague' portion of the memory.",
+          "superseded_by": "The user moved to Berlin last week.",
+          "refutation_reason": "Because the NEW_OBSERVATION states the user moved to Berlin last week, the premise that the user \u201clives in Prague\u201d is directly contradicted, leaving no plausible way the Prague residence could still be true after that move (even if the commute-by-bike detail might remain)."
+        }
+      ]
+    },
+    {
+      "id": "job_change",
+      "type": "type1_coreferential",
+      "query": "What should I say about my current job in my LinkedIn bio?",
+      "baseline_answer": "Say that you\u2019re a **Data Scientist at Klarna** (recently accepted), and you previously worked as a **Backend Engineer at Spotify in Stockholm**.\n\n**Plug-and-play options (pick one):**\n1) **Professional:** Data Scientist at **Klarna** (starting now). Previously Backend Engineer at **Spotify** (Stockholm).  \n2) **Results-focused:** Data Scientist at Klarna\u2014building data-driven products. Former Backend Engineer at Spotify, Stockholm.  \n3) **Approachable:** Recently started as a Data Scientist at **Klarna**. Previously worked as a Backend Engineer at **Spotify** in Stockholm.",
+      "baseline_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": true,
+        "verdict": "correct",
+        "reasoning": "The answer recommends updating the bio to say the user is a Data Scientist at Klarna and only references Spotify as a previous role, which matches the UPDATE that the user accepted the new Klarna job."
+      },
+      "guarded_answer": "You can say that you\u2019re a Data Scientist at Klarna. For example:\n\n\u201cData Scientist at Klarna | Building data-driven solutions and models to drive impactful decisions.\u201d",
+      "guarded_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": null,
+        "verdict": "correct",
+        "reasoning": "The answer recommends stating the user is a Data Scientist at Klarna, which is consistent with the UPDATE (they accepted a new job as a data scientist at Klarna) and does not suggest they are still a backend engineer at Spotify."
+      },
+      "premise_warnings": [
+        "\"The user works as a backend engineer at Spotify in Stockholm.\" is OUTDATED (The new observation indicates the user changed jobs and is now a data scientist at Klarna, contradicting the prior specific employment at Spotify in Stockholm.). Superseded by: The user is a data scientist at Klarna."
+      ],
+      "judgements": [
+        {
+          "node_id": "dc89722d-3a57-5e9c-a160-7f571d72690b",
+          "old_text": "The user works as a backend engineer at Spotify in Stockholm.",
+          "new_text": "The user just accepted a new job as a data scientist at Klarna.",
+          "source": "semantic",
+          "refuted": false,
+          "verdict": "REPLACE",
+          "conflict_type": "type1_coreferential",
+          "reason": "The new observation indicates the user changed jobs and is now a data scientist at Klarna, contradicting the prior specific employment at Spotify in Stockholm.",
+          "superseded_by": "The user is a data scientist at Klarna.",
+          "refutation_reason": "Accepting a new job as a data scientist at Klarna strongly implies a job change away from the specific prior role (backend engineer at Spotify in Stockholm), so the old employment fact is very unlikely to remain true concurrently."
+        }
+      ]
+    },
+    {
+      "id": "relationship_status",
+      "type": "type1_coreferential",
+      "query": "Who should I list as my emergency contact and next of kin?",
+      "baseline_answer": "Based on the info here: **Sarah** is the closest match.\n\n### Who to list\n- **Emergency contact / Next of kin:** **Sarah** (you\u2019re indicated as living together in Austin and were married to her; no other kin is provided).\n\n### What to verify before finalizing\n- **Are you currently divorced or still legally married?** The context says you were **divorced from Sarah six months ago**, so confirm which one applies.\n- **Can she reliably be reached and consent to be contacted** in an emergency?\n- If not, choose the **closest available person** you want contacted (e.g., a family member or trusted partner).\n\n*Note: next-of-kin/emergency-contact rules and default definitions vary by country/state.*",
+      "baseline_grade": {
+        "reflects_current_state": false,
+        "corrected_stale_premise": true,
+        "verdict": "stale",
+        "reasoning": "The answer recommends listing **Sarah** as emergency contact/next of kin, but the update says the user **got divorced from Sarah six months ago**. It does acknowledge the divorce context in a verification step, yet it still directly asserts Sarah is the closest match and should be listed, which is inconsistent with the current state."
+      },
+      "guarded_answer": "I don\u2019t have enough information to tell you who to list as your emergency contact and next of kin.\n\nThe only detail I have is that you divorced Sarah six months ago. If you want, tell me who you\u2019re considering (e.g., a family member, friend, or another relative) and the country/state you\u2019re in, and I can help you think through the typical choices and factors to consider.",
+      "guarded_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": null,
+        "verdict": "correct",
+        "reasoning": "The answer does not recommend listing Sarah as emergency contact/next of kin and instead says it lacks enough information, only mentioning the update that the user divorced Sarah six months ago."
+      },
+      "premise_warnings": [
+        "\"The user is married to Sarah and they live together in Austin.\" is OUTDATED (The new observation says the user divorced Sarah six months ago, contradicting the old memory that they are married and live together.). Superseded by: The user is divorced from Sarah (six months ago)."
+      ],
+      "judgements": [
+        {
+          "node_id": "1c1d9a43-5c09-5f7c-b298-3f54dfbe6596",
+          "old_text": "The user is married to Sarah and they live together in Austin.",
+          "new_text": "The user got divorced from Sarah six months ago.",
+          "source": "semantic",
+          "refuted": false,
+          "verdict": "STALE",
+          "conflict_type": "type1_coreferential",
+          "reason": "The new observation says the user divorced Sarah six months ago, contradicting the old memory that they are married and live together.",
+          "superseded_by": "The user is divorced from Sarah (six months ago).",
+          "refutation_reason": "Given NEW_OBSERVATION states the user got divorced from Sarah six months ago, the specific claims in OLD_MEMORY (married to Sarah and living together) are directly inconsistent, and there\u2019s no plausible way they both remain true after that divorce."
+        }
+      ]
+    },
+    {
+      "id": "diet_became_vegetarian",
+      "type": "type1_coreferential",
+      "query": "Suggest a restaurant for my birthday dinner.",
+      "baseline_answer": "I can\u2019t recommend a specific birthday restaurant yet\u2014your context says you *used to* love steak/grilling, but you\u2019ve been a **strict vegetarian for health reasons**.  \n\nTo suggest a good spot, I need:\n1) City/area (or neighborhood)  \n2) Budget per person  \n3) Preferred cuisine (e.g., Italian, Indian, modern veg, etc.)  \n4) Party size  \n5) Date/time  \n6) Any dietary needs beyond vegetarian (e.g., vegan, gluten-free, allergies)",
+      "baseline_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": null,
+        "verdict": "correct",
+        "reasoning": "The answer explicitly accounts for the update: \u201cyou\u2019ve been a strict vegetarian for health reasons,\u201d and does not rely on the stale premise about weekend grilling/steak love. It then asks for needed details to make a restaurant recommendation."
+      },
+      "guarded_answer": "I don\u2019t have enough information to suggest a specific restaurant. Since you\u2019ve been a strict vegetarian for health reasons (for about two months), tell me your city/neighborhood (and any preferences like Italian/Indian/Mediterranean or a budget), and I can recommend an appropriate option.",
+      "guarded_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": null,
+        "verdict": "correct",
+        "reasoning": "The answer acknowledges the update: \u201cyou\u2019ve been a strict vegetarian for health reasons (for about two months)\u201d and asks for location/preferences, rather than suggesting a steak/meat-focused restaurant."
+      },
+      "premise_warnings": [
+        "\"The user loves eating steak and grills meat every weekend.\" is OUTDATED (The new observation says the user became a strict vegetarian, directly contradicting the old memory that they love eating steak and grill meat every weekend.). Superseded by: The user became a strict vegetarian two months ago for health reasons."
+      ],
+      "judgements": [
+        {
+          "node_id": "aa2a71f1-401e-52a4-bbef-26b278a787c7",
+          "old_text": "The user loves eating steak and grills meat every weekend.",
+          "new_text": "The user became a strict vegetarian two months ago for health reasons.",
+          "source": "semantic",
+          "refuted": false,
+          "verdict": "REPLACE",
+          "conflict_type": "type1_coreferential",
+          "reason": "The new observation says the user became a strict vegetarian, directly contradicting the old memory that they love eating steak and grill meat every weekend.",
+          "superseded_by": "The user became a strict vegetarian two months ago for health reasons.",
+          "refutation_reason": "A strict vegetarian regime starting two months ago is a direct contradiction to a standing preference and habitual grilling of steak every weekend, so the old claim is unlikely to remain true in light of the new, broader behavioral update."
+        }
+      ]
+    },
+    {
+      "id": "phone_platform_switch",
+      "type": "type1_coreferential",
+      "query": "Recommend a good note-taking app for my phone.",
+      "baseline_answer": "Quick questions so I recommend the right one:\n1) Are you using **Android (Samsung Galaxy)** or **iPhone (iOS)**?\n2) Do you need **cross-device sync** (e.g., phone + laptop), or is offline-only fine?\n\nBased on your current context (**Android Samsung Galaxy**), a solid default recommendation is **Microsoft OneNote** (free, good organization/search, works great offline, and syncs across devices).",
+      "baseline_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": true,
+        "verdict": "correct",
+        "reasoning": "The answer explicitly updates to the current state by asking about and then recommending for **Android (Samsung Galaxy)** (\u201cBased on your current context (Android Samsung Galaxy)\u2026\u201d), which is consistent with the UPDATE and not the original iPhone/iOS premise."
+      },
+      "guarded_answer": "Since you\u2019re using a Samsung Galaxy Android phone, I don\u2019t have enough information from the provided facts to recommend a specific note-taking app. If you tell me what you need (e.g., offline use, syncing across devices, handwriting support, or simple vs. feature-rich), I can narrow it down.",
+      "guarded_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": null,
+        "verdict": "correct",
+        "reasoning": "The answer acknowledges the current state by saying \u201cSince you\u2019re using a Samsung Galaxy Android phone,\u201d and it doesn\u2019t rely on the outdated iPhone/iOS-only premise."
+      },
+      "premise_warnings": [
+        "\"The user has an iPhone 14 and only uses iOS apps.\" is OUTDATED (NEW_OBSERVATION states the user switched from iPhone/iOS to a Samsung Android phone, contradicting the old iPhone 14 and iOS-only claim.). Superseded by: The user switched to a Samsung Galaxy Android phone last month."
+      ],
+      "judgements": [
+        {
+          "node_id": "5a341b43-0bfa-576c-9f84-d0102ac45c2f",
+          "old_text": "The user has an iPhone 14 and only uses iOS apps.",
+          "new_text": "The user switched to a Samsung Galaxy Android phone last month.",
+          "source": "semantic",
+          "refuted": false,
+          "verdict": "REPLACE",
+          "conflict_type": "type1_coreferential",
+          "reason": "NEW_OBSERVATION states the user switched from iPhone/iOS to a Samsung Android phone, contradicting the old iPhone 14 and iOS-only claim.",
+          "superseded_by": "The user switched to a Samsung Galaxy Android phone last month.",
+          "refutation_reason": "The new observation explicitly says the user switched to a Samsung Galaxy Android phone last month, which directly contradicts the claim that they have an iPhone 14 and only use iOS apps; barring unlikely edge cases like retaining the iPhone while still only using iOS apps, the iOS-only part cannot coexist with using Android."
+        }
+      ]
+    },
+    {
+      "id": "moved_country",
+      "type": "type1_coreferential",
+      "query": "What currency should I budget my rent in?",
+      "baseline_answer": "Budget your rent in **British pounds (GBP)**\u2014that\u2019s the currency you pay in for your rent.  \n\nDo you pay your rent in any other currency instead (and if so, which country/currency)?",
+      "baseline_grade": {
+        "reflects_current_state": false,
+        "corrected_stale_premise": true,
+        "verdict": "stale",
+        "reasoning": "The answer says to budget rent in British pounds because that\u2019s the currency the user pays in (\u201cBudget your rent in British pounds (GBP)\u2014that\u2019s the currency you pay in for your rent.\u201d), but after the user relocated to Tokyo, the prior premise that they pay in GBP is no longer valid."
+      },
+      "guarded_answer": "Since you relocated to Tokyo for a two-year assignment, you should budget your rent in **Japanese yen (JPY)**.",
+      "guarded_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": null,
+        "verdict": "correct",
+        "reasoning": "The answer recommends budgeting rent in Japanese yen, consistent with the updated fact that the user relocated to Tokyo. It does not continue to assume the prior London/British pounds situation."
+      },
+      "premise_warnings": [
+        "\"The user is based in London and pays in British pounds.\" is OUTDATED (The new observation says the user relocated to Tokyo, which implicitly contradicts the old claim that the user is based in London (and likely affects currency context).). Superseded by: The user relocated to Tokyo for a two-year assignment."
+      ],
+      "judgements": [
+        {
+          "node_id": "dc9b841c-6741-520b-8254-7f8668691659",
+          "old_text": "The user is based in London and pays in British pounds.",
+          "new_text": "The user relocated to Tokyo for a two-year assignment.",
+          "source": "semantic",
+          "refuted": false,
+          "verdict": "STALE",
+          "conflict_type": "type1_coreferential",
+          "reason": "The new observation says the user relocated to Tokyo, which implicitly contradicts the old claim that the user is based in London (and likely affects currency context).",
+          "superseded_by": "The user relocated to Tokyo for a two-year assignment.",
+          "refutation_reason": "Relocating to Tokyo for a two-year assignment plausibly makes \u201cbased in London and pays in British pounds\u201d no longer true for the relevant period, and there\u2019s no clear way for both claims to remain concurrently valid without additional qualifiers (e.g., still based in London or paying in GBP while in Tokyo)."
+        }
+      ]
+    },
+    {
+      "id": "broken_leg_commute",
+      "type": "type2_propagated",
+      "query": "What's my commute plan for tomorrow morning?",
+      "baseline_answer": "Tomorrow morning commute plan (assuming \u201ctomorrow\u201d is a normal weekday morning):\n\n- **07:00 (or your usual start time):** **Bike to work** (commute **every day**; mode: **bicycle/vehicle**).  \n- **Arrive at work:** Go to **work** after biking.  \n\n**Backup options (if biking isn\u2019t possible):**  \n- **Switch to an alternate transportation mode** (e.g., transit/taxi) to still reach **work** on time.\n\nQuick check: what time are you leaving tomorrow, and where are you starting from (origin) and going to (work address/area)?",
+      "baseline_grade": {
+        "reflects_current_state": false,
+        "corrected_stale_premise": true,
+        "verdict": "stale",
+        "reasoning": "The UPDATE says the user broke their leg in a skiing accident, but the ANSWER still states \u201cBike to work (commute every day)\u201d as tomorrow morning\u2019s plan. It also offers a generic backup, without acknowledging the leg injury as likely affecting biking, so it treats the pre-UPDATE commute condition as still valid."
+      },
+      "guarded_answer": "I only know that you commute to work by bicycle every day. Since you broke your leg yesterday in a skiing accident, I don\u2019t have enough information to know whether you should still bike tomorrow morning or what adjustment plan to make. If you tell me whether you can ride safely (or if you\u2019re using crutches/cast), I can help suggest a commute option.",
+      "guarded_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": null,
+        "verdict": "correct",
+        "reasoning": "The answer acknowledges the updated fact that the user broke their leg yesterday and therefore says it doesn\u2019t have enough information to advise biking tomorrow morning, instead of recommending the unchanged bicycle commute plan."
+      },
+      "premise_warnings": [
+        "\"The user goes to the gym for leg day every Monday.\" is OUTDATED (Breaking the user\u2019s leg yesterday makes the prior routine of going to the gym for leg day every Monday no longer reliably true.). Superseded by: The user broke their leg yesterday in a skiing accident."
+      ],
+      "judgements": [
+        {
+          "node_id": "2d3da094-d6ed-5177-9cf9-b3d88fac8a26",
+          "old_text": "The user commutes to work by bicycle every day.",
+          "new_text": "The user goes to the gym for leg day every Monday.",
+          "source": "semantic",
+          "refuted": true,
+          "verdict": "STALE",
+          "conflict_type": "type2_propagated",
+          "reason": "The new observation indicates the user\u2019s weekly schedule and physical activity focus, which breaks the implied ongoing condition behind daily bicycle commuting.",
+          "superseded_by": null,
+          "refutation_reason": "OLD_MEMORY could still be true even if the user has a Monday leg-day gym routine\u2014for example, they may still bicycle to work every day while also attending the gym on Mondays."
+        },
+        {
+          "node_id": "2afcb9aa-546b-56b2-8b0f-4cfdaeb0cc4e",
+          "old_text": "The user goes to the gym for leg day every Monday.",
+          "new_text": "The user broke their leg yesterday in a skiing accident.",
+          "source": "semantic",
+          "refuted": false,
+          "verdict": "STALE",
+          "conflict_type": "type2_propagated",
+          "reason": "Breaking the user\u2019s leg yesterday makes the prior routine of going to the gym for leg day every Monday no longer reliably true.",
+          "superseded_by": null,
+          "refutation_reason": "Given the new observation that the user broke a leg yesterday, the Monday leg-day routine is unlikely to remain reliably true going forward, and the old statement is best treated as superseded rather than still true."
+        },
+        {
+          "node_id": "2d3da094-d6ed-5177-9cf9-b3d88fac8a26",
+          "old_text": "The user commutes to work by bicycle every day.",
+          "new_text": "The user broke their leg yesterday in a skiing accident.",
+          "source": "semantic",
+          "refuted": true,
+          "verdict": "STALE",
+          "conflict_type": "type2_propagated",
+          "reason": "Breaking the user\u2019s leg makes the prior daily bicycle commuting claim invalid because it depends on the user being able to commute normally.",
+          "superseded_by": null,
+          "refutation_reason": "OLD_MEMORY could remain true as a historical fact (the user commuted by bicycle every day up until the skiing accident), and the new observation only shows a change in circumstances starting yesterday rather than disproving that earlier daily commutes occurred."
+        }
+      ]
+    },
+    {
+      "id": "pregnancy_alcohol",
+      "type": "type2_propagated",
+      "query": "Suggest a fun weekend activity for me.",
+      "baseline_answer": "Go on a **wine tasting tour this weekend**\u2014it matches your enjoyment of wine tasting tours and your weekend wine collecting.",
+      "baseline_grade": {
+        "reflects_current_state": false,
+        "corrected_stale_premise": null,
+        "verdict": "stale",
+        "reasoning": "The update reveals the user is pregnant, but the answer still recommends \u201cGo on a **wine tasting tour this weekend**,\u201d treating the earlier wine-focused weekend routine as fully applicable without accounting for pregnancy."
+      },
+      "guarded_answer": "How about a **wine-tasting\u2013style mocktail/juice flight** at a nearby tasting room that welcomes expectant moms? You can still enjoy the \u201ctasting tour\u201d vibe\u2014sampling different flavors and learning tasting notes\u2014while keeping it pregnancy-safe. Pair it with a relaxed weekend lunch afterward.",
+      "guarded_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": null,
+        "verdict": "correct",
+        "reasoning": "The answer adapts to the updated pregnancy status by recommending a pregnancy-safe alternative (\u201cwine-tasting\u2013style mocktail/juice flight\u201d and \u201cwelcomes expectant moms\u201d), rather than suggesting alcohol wine tasting as in the original facts."
+      },
+      "premise_warnings": [],
+      "judgements": [
+        {
+          "node_id": "996a5081-f286-5d17-a211-362a143b54da",
+          "old_text": "The user enjoys wine tasting tours and collects fine wine on weekends.",
+          "new_text": "The user found out she is pregnant two weeks ago.",
+          "source": "semantic",
+          "refuted": false,
+          "verdict": "KEEP",
+          "conflict_type": "none",
+          "reason": "Pregnancy does not inherently invalidate the user\u2019s prior preference for wine tasting tours or collecting wine on weekends, and there is no direct contradiction or broken precondition stated.",
+          "superseded_by": null
+        }
+      ]
+    },
+    {
+      "id": "lost_drivers_license",
+      "type": "type2_propagated",
+      "query": "How should I plan my trip to visit family this weekend?",
+      "baseline_answer": "Based on your info: **you normally visit family every weekend and drive your own car**, but **your driver\u2019s license was suspended last week**. So plan this weekend around not being able to drive.\n\n## Step-by-step (low-stress)\n1. **Confirm whether you can legally drive this weekend.** (If your license is still suspended, assume you can\u2019t drive.)\n2. **Line up transportation options:**\n   - If not legal to drive: **get a ride** from family/friend or arrange another driver/car service.\n   - If legal: do your normal **car trip planning** (route + timing).\n3. **Pick a simple visit window** this weekend (morning or early afternoon) to minimize schedule pressure.\n4. **Pack \u201ctrip basics\u201d** for a short family visit: keys/ID (if allowed), phone charger, meds, any gifts.\n5. **Have a contingency:**\n   - If the ride falls through, have a **backup option ready** (another person or paid transport).\n\n## Checklist\n- [ ] Can I legally drive right now?  \n- [ ] If not: who/what is my ride plan? (primary + backup)  \n- [ ] Departure time chosen for low stress  \n- [ ] Address/ETA confirmed with family  \n- [ ] Essentials packed (ID/phone/charger/meds)  \n\nIf you tell me **where your family is (city/region)**, **your travel time by car**, **your budget for rides**, and **which days/times you\u2019re free this weekend**, I\u2019ll tailor a concrete itinerary and backup plan.",
+      "baseline_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": null,
+        "verdict": "correct",
+        "reasoning": "The answer explicitly incorporates the update: \u201cyour driver\u2019s license was suspended last week\u2026 So plan this weekend around not being able to drive,\u201d and gives steps for alternative transportation if driving isn\u2019t legal."
+      },
+      "guarded_answer": "Because your driver\u2019s license was suspended last week after a violation, you shouldn\u2019t plan to drive your own car this weekend. I don\u2019t have enough information to suggest a specific alternative (e.g., whether you can use public transit, arrange a ride, or another legal transportation option). If you tell me your starting location, how far you\u2019re traveling, and whether you\u2019re able to get a ride or use public transit, I can help you plan the trip accordingly.",
+      "guarded_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": true,
+        "verdict": "correct",
+        "reasoning": "The answer explicitly incorporates the update (\u201cyour driver\u2019s license was suspended\u2026so you shouldn\u2019t plan to drive your own car this weekend\u201d), correcting the original assumption that the user can drive their own car every weekend. It then asks for details needed to plan an alternative."
+      },
+      "premise_warnings": [],
+      "judgements": [
+        {
+          "node_id": "e7b631ad-6128-5976-995e-8abdd8e599b2",
+          "old_text": "The user drives their own car to visit family every weekend.",
+          "new_text": "The user's driver's license was suspended last week after a violation.",
+          "source": "semantic",
+          "refuted": true,
+          "verdict": "STALE",
+          "conflict_type": "type2_propagated",
+          "reason": "A suspended driver's license undermines the precondition needed for the user to drive their own car every weekend, so the old driving routine is no longer valid.",
+          "superseded_by": null,
+          "refutation_reason": "A suspended license only removes the ability to drive themselves, not necessarily that the weekend trip didn\u2019t still occur (e.g., they now use a different driver/ride-share or go by another mode), so the \u201cuser visits family every weekend\u201d aspect of the memory could remain true even if the \u201cdrives their own car\u201d part became false."
+        }
+      ]
+    },
+    {
+      "id": "layoff_daily_schedule",
+      "type": "type2_propagated",
+      "query": "What does my morning routine look like this week?",
+      "baseline_answer": "This week (daily):\n- **6:00 AM** \u2014 Wake up to catch the **train** to the **office** (every day).",
+      "baseline_grade": {
+        "reflects_current_state": false,
+        "corrected_stale_premise": null,
+        "verdict": "stale",
+        "reasoning": "The answer asserts the user will wake at 6:00 AM to catch the train to the office \u201c(every day),\u201d but the update says the user was laid off three days ago, which makes the office/train commute routine outdated. The question doesn\u2019t presuppose a specific stale fact to correct, so corrected_stale_premise is null."
+      },
+      "guarded_answer": "I don\u2019t have enough information to describe your full morning routine this week. \n\nWhat I can confirm from the facts: you wake up every day at 6am to catch the train to the office. \n\nAlso, you were laid off three days ago, but I don\u2019t know how (or whether) that changes your routine.",
+      "guarded_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": null,
+        "verdict": "correct",
+        "reasoning": "The answer does not claim the user\u2019s routine still includes commuting to the office; it only repeats the unchanging fact \u201cyou wake up every day at 6am to catch the train to the office\u201d while explicitly stating it lacks information to describe the full routine and that it doesn\u2019t know how the layoff changes it."
+      },
+      "premise_warnings": [],
+      "judgements": [
+        {
+          "node_id": "435623ac-3357-56bd-afa8-ea5ae2fa980f",
+          "old_text": "The user wakes up at 6am every day to catch the train to the office.",
+          "new_text": "The user was laid off from their job three days ago.",
+          "source": "semantic",
+          "refuted": true,
+          "verdict": "STALE",
+          "conflict_type": "type2_propagated",
+          "reason": "Being laid off three days ago breaks the precondition that the user still has an office train commute each day, which makes the 6am weekday routine stale.",
+          "superseded_by": null,
+          "refutation_reason": "The 6am wake/commute routine could plausibly persist for other reasons (e.g., the user still commutes daily for a new job/interviews, a training program, freelance client work, or to meet someone) even though they were laid off three days ago, so the proposed \u201cprecondition\u201d that they no longer have any train commute isn\u2019t guaranteed to hold."
+        }
+      ]
+    },
+    {
+      "id": "knee_surgery_running_goal",
+      "type": "type2_propagated",
+      "query": "What should today's training session look like?",
+      "baseline_answer": "Because you\u2019re on **strict bed rest after knee surgery yesterday**, **do not run today** (no 10km or training volume).\n\n### Today\u2019s training session (safe \u201crecovery day\u201d)\n**Goal:** maintain circulation, prevent stiffness, and keep mobility without stressing the knee.\n\n**Warm-up (10\u201315 min)**\n- Ankle pumps: **2\u20133 sets x 30\u201360 sec** (easy)\n- Calf/hamstring gentle isometrics (no knee bending): **2 sets x 10\u201315 reps** (5 sec holds)\n- Upper-body wake-up: **shoulder rolls + neck mobility** **1\u20132 min each** (easy)\n\n**Main work (20\u201330 min)**\n- Upper body strength (choose 3):\n  - Seated dumbbell/ band row: **3 x 8\u201312**\n  - Chest press (band or light weights): **3 x 8\u201312**\n  - Lat pulldown/band pullover: **3 x 8\u201312**\n- Core/hip stability (keep knee still):\n  - Braced abdominal holds: **4 x 20\u201330 sec**\n  - Glute squeezes: **3 x 15\u201320** (5 sec holds)\n- Breathing/cardiovascular tempo:\n  - Diaphragmatic breathing + slow movement: **5\u20138 min**\n\n**Cool-down (5\u201310 min)**\n- Gentle stretching **of unaffected areas only** (upper body, calves if allowed)\n- Easy breathing + relaxation\n\n**Rest / session rules**\n- Stop any activity that increases **knee pain, swelling, or pressure**.\n- If you have a rehab protocol from your surgeon/PT, **follow that first**.\n\nIf you tell me what equipment you have (bands/dumbbells) and the exact knee restrictions (e.g., ROM limits, weight-bearing allowed/not), I\u2019ll tailor the exact exercises and reps.",
+      "baseline_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": true,
+        "verdict": "correct",
+        "reasoning": "The answer explicitly says \u201cdo not run today (no 10km or training volume)\u201d in response to \u201cstrict bed rest after knee surgery yesterday,\u201d which matches the updated situation. It also correctly overrides the original routine of \u201cruns 10km every morning\u201d by recommending a non-running recovery day."
+      },
+      "guarded_answer": "I don\u2019t have enough information to prescribe a safe \u201ctraining session\u201d plan. With strict bed rest for six weeks after knee surgery, your session today should follow your surgeon/physiotherapist\u2019s orders.\n\nIf you tell me:\n1) your surgery type (e.g., ACL/meniscus/replacement),\n2) what activity is allowed or prohibited right now,\n3) what your PT has prescribed (ROM limits, weight-bearing status, exercises),\n4) your current pain level and any restrictions,*\n\n\u2026I can help you outline what a compliant, day-by-day regimen might look like within those limits.\n\n*In the meantime, avoid anything that stresses the operated knee or increases pain/swelling unless explicitly approved by your care team.",
+      "guarded_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": true,
+        "verdict": "correct",
+        "reasoning": "The answer explicitly accounts for the updated situation (\u201cstrict bed rest for six weeks after knee surgery\u201d) and does not recommend continuing the prior 10km morning running. It also appropriately avoids using the stale marathon-training assumption and redirects the user to surgeon/PT orders and permitted/prohibited activities."
+      },
+      "premise_warnings": [
+        "\"The user is training for a marathon and runs 10km every morning.\" is OUTDATED (The user\u2019s knee surgery and required six weeks of bed rest makes the prior routine of running 10km every morning no longer valid.). Superseded by: On strict bed rest for six weeks after knee surgery; no morning 10km running."
+      ],
+      "judgements": [
+        {
+          "node_id": "1fcc8c3f-3402-55ec-885f-45a59da2e49a",
+          "old_text": "The user is training for a marathon and runs 10km every morning.",
+          "new_text": "The user had knee surgery yesterday and is on strict bed rest for six weeks.",
+          "source": "semantic",
+          "refuted": false,
+          "verdict": "STALE",
+          "conflict_type": "type2_propagated",
+          "reason": "The user\u2019s knee surgery and required six weeks of bed rest makes the prior routine of running 10km every morning no longer valid.",
+          "superseded_by": "On strict bed rest for six weeks after knee surgery; no morning 10km running.",
+          "refutation_reason": "Given strict bed rest for six weeks after knee surgery, it\u2019s implausible that the user is still running 10km every morning during that period, so the old running routine is no longer valid."
+        }
+      ]
+    },
+    {
+      "id": "peanut_allergy_diagnosis",
+      "type": "type2_propagated",
+      "query": "What snack should I bring to share at the office party?",
+      "baseline_answer": "Because you have a **severe peanut allergy**, don\u2019t bring **peanut butter cookies** or anything with peanuts/\u201cmay contain peanuts.\u201d\n\nHere are safer, crowd-pleasing office-party options that are easy to transport (and typically easier for peanut-allergy folks):\n\n1) **Cookie trays made without peanuts** (e.g., chocolate chip, oatmeal) \u2014 shareable, portion-friendly.  \n2) **Brownie bites (peanut-free)** \u2014 easy grab-and-go.  \n3) **Veggie platter + dip (no peanut ingredients)** (hummus or ranch) \u2014 no-mess, fresh, big crowd appeal.  \n4) **Assorted fruit tray** \u2014 allergen-friendly by nature and very transportable.  \n5) **Chips + salsa/guacamole (check labels for cross-contact)** \u2014 classic office snack, easy to share.\n\nIf you tell me any other dietary needs (gluten-free, dairy-free, vegetarian) I can narrow it to the best single choice.",
+      "baseline_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": false,
+        "verdict": "correct",
+        "reasoning": "The answer explicitly advises not to bring peanut butter cookies due to the updated fact of a severe peanut allergy: \u201cdon\u2019t bring peanut butter cookies or anything with peanuts/\u2018may contain peanuts.\u2019\u201d The query asks what to bring, and the recommendation aligns with the allergy diagnosis."
+      },
+      "guarded_answer": "Given your severe peanut allergy, you should not bring peanut butter cookies or any snack that contains peanuts or may have peanut cross-contamination. Bring a clearly peanut-free option instead (e.g., a sealed packaged snack labeled \u201cpeanut-free\u201d and ideally made in a facility that does not process peanuts).",
+      "guarded_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": true,
+        "verdict": "correct",
+        "reasoning": "The answer advises against bringing peanut butter cookies due to the newly diagnosed severe peanut allergy, aligning with the updated reality. It explicitly recommends a clearly peanut-free option and addresses cross-contamination, correcting the earlier premise that the user eats peanut butter cookies daily."
+      },
+      "premise_warnings": [],
+      "judgements": [
+        {
+          "node_id": "69db6be2-bc10-5444-b857-4fb09c993135",
+          "old_text": "The user's favorite snack is peanut butter cookies, which they eat daily.",
+          "new_text": "The user was just diagnosed with a severe peanut allergy this week.",
+          "source": "semantic",
+          "refuted": true,
+          "verdict": "STALE",
+          "conflict_type": "type2_propagated",
+          "reason": "A severe peanut allergy makes it invalid to treat the user's daily eating of peanut-butter cookies as still true.",
+          "superseded_by": null,
+          "refutation_reason": "The diagnosis this week doesn\u2019t necessarily prove they hadn\u2019t been eating peanut-butter cookies before; they could have been unknowingly tolerating/incidentally consuming them prior to diagnosis (or having a delayed/variable allergic reaction), so the statement \u201cthey eat daily\u201d could still be true depending on when \u201cdaily\u201d is anchored relative to the diagnosis."
+        }
+      ]
+    },
+    {
+      "id": "stale_coding_convention",
+      "type": "type2_propagated",
+      "query": "Generate a new component that manages its own local list-filter state \u2014 which state management approach should it follow?",
+      "baseline_answer": "Follow the codebase\u2019s current state-management approach: **use Zustand** (the team migrated the frontend from **Redux \u2192 Zustand**, and new state patterns should follow that).\n\n**Rule of thumb:** keep list-filter state **local to the component** (e.g., `useState/useReducer`) when it\u2019s only used there; escalate to **Zustand/global state** only when the filter state must be shared across multiple components/screens or requires cross-cutting persistence.",
+      "baseline_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": true,
+        "verdict": "correct",
+        "reasoning": "The answer recommends using Zustand and explicitly notes the migration from Redux \u2192 Zustand, aligning with the UPDATE. It also addresses the local-vs-global rule for list-filter state, consistent with the new codebase approach."
+      },
+      "guarded_answer": "Since the frontend has already been migrated from Redux to Zustand, the new component should follow that approach\u2014i.e., use Zustand for state management where appropriate. For a component that manages its own local list-filter state, use component-local state or a small Zustand store scoped for that component\u2019s needs, rather than Redux.",
+      "guarded_grade": {
+        "reflects_current_state": true,
+        "corrected_stale_premise": true,
+        "verdict": "correct",
+        "reasoning": "The ANSWER says the component should follow Zustand now that the frontend was migrated (\u201calready been migrated from Redux to Zustand\u201d). It also avoids the stale premise that new components must use Redux, instead recommending component-local state or a small Zustand store."
+      },
+      "premise_warnings": [
+        "\"The team's frontend codebase uses Redux for all state management, and every new component follows that pattern.\" is OUTDATED (The new observation directly contradicts the old memory\u2019s claim that the frontend uses Redux for state management, stating it has migrated to Zustand.). Superseded by: The team finished migrating the entire frontend from Redux to Zustand last sprint."
+      ],
+      "judgements": [
+        {
+          "node_id": "25979364-a6ae-58b4-bb45-acf38c77b2ad",
+          "old_text": "The team's frontend codebase uses Redux for all state management, and every new component follows that pattern.",
+          "new_text": "The team finished migrating the entire frontend from Redux to Zustand last sprint.",
+          "source": "semantic",
+          "refuted": false,
+          "verdict": "REPLACE",
+          "conflict_type": "type1_coreferential",
+          "reason": "The new observation directly contradicts the old memory\u2019s claim that the frontend uses Redux for state management, stating it has migrated to Zustand.",
+          "superseded_by": "The team finished migrating the entire frontend from Redux to Zustand last sprint.",
+          "refutation_reason": "If the team migrated the entire frontend from Redux to Zustand, the claim that Redux is used for all state management would no longer hold, and the old \u201cnew components follow that pattern\u201d assertion would be contradicted rather than merely outdated or partial."
+        }
+      ]
+    }
+  ]
+}
