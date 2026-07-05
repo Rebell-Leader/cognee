@@ -1,95 +1,114 @@
 # STALE-Guard demo recording script
 
-**Tool:** `stale_guard/app.py` — a small Gradio app, three tabs. Run it from inside the `cognee/` repo (`cd cognee && python stale_guard/app.py`) and open the printed localhost URL in a browser for recording. Click through in order while narrating; every button in Tab 2 makes a real LLM call, no fixed timer, so talk as long as you need before clicking the next one.
+**Tool:** `stale_guard/app.py` — run `cd cognee && python stale_guard/app.py`, open the printed localhost URL, maximize the browser. Three tabs: 1. The Problem, 2. Live Demo, 3. Graph & Proof.
 
-(A terminal-only version, `stale_guard/record_demo.py`, still exists if you'd rather record a terminal than a browser — same beats, same voiceover works for either.)
+**Hard requirement: ≤ 3:00 total**, covering About the project, Tech stack & architecture, Demo, and (optional) Learning & growth. Budget below targets **2:50** to leave a margin — LLM call latency varies run to run, and a rigid script that assumes exact timing will blow the limit on a slow call.
 
-**Estimated runtime:** ~2.5-3 min at a natural talking pace, ~90s if you cut to the tight version (marked below).
+**The one cut that buys you the most margin:** don't run the live baseline button. Tab 1's intro already gives the concrete Prague/Berlin example in words, so the failure mode is established before you ever open Tab 2 — you don't need to re-demonstrate it live. Running it live costs ~30-40s of screen time (2 sequential `add`+`cognify` calls plus a search) for something the viewer has already understood from the narration. Skip it and go straight to STALE-Guard's remember → remember → recall. If you want it anyway, see the "if you have extra margin" note at the end.
 
----
-
-## Tab 1 — "The Problem"
-
-**On screen:** the intro tab, scroll down through it as you talk.
-
-**Voiceover:**
-> "Every memory framework, Cognee included, retrieves facts really well. Here's the problem: none of them check whether a stored fact has quietly stopped being true. Say the user lives in Prague and bikes to work every day, then tell it a moment later they just moved to Berlin. Standard memory keeps both facts around. Ask an ordinary question afterward, and it can confidently answer using Prague simply because that memory matches better, whether or not it's still true.
->
-> This is a known problem — the STALE benchmark puts a number on it: the best frontier LLM only hits 55.2% accuracy at catching these implicit conflicts, and every memory framework it tested scores under 18%."
+**Wait-time discipline:** every live click below triggers a real LLM call, roughly 15-30 seconds. The narration for each is written long enough to cover a slow response — if the result renders while you're still mid-sentence, just finish the clause naturally and move on to reading it. Don't stop and wait in silence; keep talking.
 
 ---
 
-## Tab 2 — "Live Demo": baseline confusion
+## 0:00–0:30 — About the project (Tab 1, top of page)
 
-**On screen:** click "Run baseline (plain Cognee)."
+**Action:** Tab 1 is already open. Scroll slowly through the intro as you talk — don't rush ahead of your own narration.
 
-**Voiceover:**
-> "Let's see it happen. Same two facts, same question: recommend a bike shop near where I live."
->
-> *(let the baseline answer render)*
->
-> "Look closely — it's still treating Prague as home, even though I told it otherwise in the exact same conversation."
+**Voiceover (~75 words, aim for 28-32s):**
+> "Every memory framework, Cognee included, retrieves facts really well. None of them check whether a stored fact has quietly stopped being true. Tell an agent the user lives in Prague and bikes to work daily, then tell it they just moved to Berlin — standard memory keeps both facts, happy to recommend a Prague bike shop months later, simply because that memory still matches the query best. The STALE benchmark measured this: the best frontier LLM only catches 55% of these conflicts, and every memory framework tested scores under 18%."
 
 ---
 
-## Tab 2 — write-time adjudication
+## 0:30–1:00 — Tech stack and architecture (Tab 1, "What we built" section)
 
-**On screen:** click "1. Remember: lives in Prague, bikes daily," then "2. Remember: just moved to Berlin."
+**Action:** [SCROLL to the "What we built" bullets — don't switch tabs yet]
 
-**Voiceover:**
-> "Now the same two facts through STALE-Guard. Every time something's remembered, a write-time judge checks it against what's already stored, using real graph traversal, not just keyword matching."
->
-> *(click fact 1 — nothing to compare against yet, say so quickly)*
->
-> "First fact, nothing to check yet. Now the Berlin fact."
->
-> *(click fact 2, let the verdict render)*
->
-> "STALE. Moving to Berlin directly contradicts living in Prague. Nothing gets deleted, Cognee's graph is append-only by design — it just gets marked, with a reason and what replaced it. Auditable, not a black-box flag."
+**Voiceover (~85 words, aim for 28-32s):**
+> "STALE-Guard fixes this by extending Cognee directly, not wrapping it. A State Adjudicator runs at write time, checking new facts against the graph two ways: vector similarity, and real graph traversal through shared entities — which is what catches conflicts that share zero vocabulary with the trigger sentence at all. Before anything is marked invalid, a second, adversarial LLM call tries to argue the first judge is wrong, since a hallucinated verdict would silently hide a true memory forever. It all writes through a new accessor pair I added to Cognee's own graph interface."
 
 ---
 
-## Tab 2 — constrained recall
+## 1:00–2:20 — Demo (Tab 2, then the graph link on Tab 3) — 80 seconds
 
-**On screen:** click "Ask: recommend a bike shop near where I live."
+**Action:** [SWITCH TO TAB 2 NOW]
 
-**Voiceover:**
-> "Exact same question as before. This time it correctly starts from Berlin, and it surfaces what I call a premise warning: it's telling me, explicitly, that my question's own assumption was outdated, and why."
+**Voiceover (start immediately on switching, ~15 words):**
+> "Let's see it live — nothing you're about to watch is pre-baked."
 
-*(Tight-cut option: if trimming for time, this is the one beat to never cut — it's the actual payoff.)*
+**Action:** [CLICK "1. Remember: lives in Prague, bikes daily" NOW]
+
+**Voiceover while it loads (~30 words, covers ~12-15s):**
+> "First fact goes in. Nothing to compare against yet, since this is the only thing in memory so far — that's expected, and the result will say so."
+
+*(let the "Remembered..." text render, don't read it aloud, it just confirms the above)*
+
+**Action:** [CLICK "2. Remember: just moved to Berlin" NOW]
+
+**Voiceover while it loads (~45 words, covers ~18-22s):**
+> "Now the Berlin fact. This is where the real check happens — the judge is comparing it against everything already stored, using graph traversal, not keyword matching, so it catches conflicts even when the wording doesn't overlap at all."
+
+**Action:** [let the verdict render, then read the key part aloud]
+
+**Voiceover reading the result (~25 words):**
+> "STALE. Moving to Berlin directly contradicts living in Prague. Nothing gets deleted — Cognee's graph is append-only — it's just marked, with a reason and what replaced it."
+
+**Action:** [CLICK "Ask: recommend a bike shop near where I live" NOW]
+
+**Voiceover while it loads (~30 words, covers ~12-15s):**
+> "Same exact question as the broken baseline case. Watch what it grounds in this time."
+
+*(let the answer and premise warning render)*
+
+**Voiceover reading the result (~30 words):**
+> "It correctly starts from Berlin, and it surfaces what I call a premise warning — telling me explicitly that my question's own assumption was outdated, and why."
+
+**Action:** [SWITCH TO TAB 3 NOW, click "Open the graph visualization →" — opens in a new tab, switch to it on screen]
+
+**Voiceover (~35 words, covers the click + tab switch + a few seconds looking at the graph):**
+> "And you can watch this happen inside Cognee's own graph visualizer — three lines of code color invalidated nodes red. That's the Prague fact, flagged, right in the graph."
+
+*(This section runs ~1:00–2:20, roughly 80s — the exact split between LLM wait time and talking time will vary by run; the total word budget above is calibrated to that window, not each individual gap.)*
 
 ---
 
-## Tab 3 — "Graph & Proof": the visual
+## 2:20–2:45 — Learning and growth (optional; Tab 3, "We didn't stop at the demo")
 
-**On screen:** click "Open the graph visualization →" (opens in a new tab).
+**Action:** [SWITCH BACK to the STALE-Guard tab, scroll to "We didn't stop at the demo"]
 
-**Voiceover:**
-> "You can watch this happen inside Cognee's own graph visualizer. I added three lines of code to color invalidated nodes red, reusing the exact pattern Cognee already uses for ontology-matched nodes. That's the Prague fact, flagged red, right in the graph."
+**Voiceover (~90 words, aim for 22-25s — talk fast or trim if you're already near 2:45):**
+> "One thing I learned building this: a small demo makes vector search look sufficient by accident, because there's nothing else competing for the top results. I proved that wasn't real by burying a conflict under fifteen irrelevant facts that read more similar to the trigger than the real one — vector search missed it completely, graph traversal found it anyway. I also stress-tested cost: grew the graph to nearly 300 nodes with a heavily-connected hub entity, and the cost of checking each new fact stayed flat."
 
----
-
-## Tab 3 — we went further
-
-**On screen:** scroll to the "We didn't stop at the demo" section.
-
-**Voiceover:**
-> "I didn't stop at the easy case. The harder problem is a fact invalidated without ever being mentioned again — 'I broke my leg' silently invalidating a daily bike commute that's never brought up again. Catching that needs actual graph traversal through shared entities, not text similarity. I proved it: buried the real conflict under fifteen irrelevant facts that read more similar to the trigger sentence than the real one does. Vector search missed it completely. Graph traversal found it anyway.
->
-> And I stress-tested cost, not just correctness: grew the graph to nearly 300 nodes with a heavily-connected hub entity, and the cost of checking each new fact stayed flat, same as on a 3-node graph."
+**If you're already past 2:45, cut this section entirely** — it's explicitly optional, and the demo payoff in the section above is the part that has to land.
 
 ---
 
-## Close
+## 2:45–2:55 — Close
 
-**Voiceover:**
-> "That's STALE-Guard — memory that knows when to stop believing itself. Full repo, writeup, and every result file mentioned here are linked below."
+**Voiceover (~20 words):**
+> "That's STALE-Guard — memory that knows when to stop believing itself. Full repo and writeup are linked below."
+
+---
+
+## If you have extra margin: adding the live baseline run
+
+Only do this if a practice run comes in under 2:30 without it. Insert right after 1:00 (before clicking "1. Remember..."):
+
+**Action:** [Stay on Tab 2, click "Run baseline (plain Cognee)" first]
+
+**Voiceover while it loads (~40 words, covers ~30-40s since this call is slower — 2 sequential add+cognify calls plus a search):**
+> "First, plain Cognee, so you can see the actual failure, not just hear about it. I'm giving it the exact same two facts. This call takes a bit longer — it's genuinely running two full ingestion passes plus a search underneath."
+
+**Voiceover reading the result (~20 words):**
+> "Notice it's still leaning on Prague, even though I told it otherwise in the same conversation."
+
+This adds ~50-60s total — budget for it by trimming the "Learning and growth" section or speaking faster in "Tech stack and architecture."
 
 ---
 
 ## Recording checklist
 
-- [ ] `.env` has a working `LLM_API_KEY` (nano model — fast, but responses will be terser than gpt-5-mini; that's fine, the mechanism is what's on trial, not prose quality).
+- [ ] `.env` has a working `LLM_API_KEY` (nano model — fast, but terser prose than gpt-5-mini; that's fine, the mechanism is what's on trial).
 - [ ] Run `python stale_guard/app.py` from inside `cognee/`, open the printed URL, maximize the browser window.
-- [ ] Do one practice click-through before recording so you know roughly how long each LLM call takes (~15-30s) — narrate through the wait, don't stare at a spinner in silence.
-- [ ] The graph link opens in a new tab — that's fine, just switch to it on screen when you click.
+- [ ] Do at least one full practice run before recording — time yourself, and know whether you're naturally landing near 2:50 or need to cut the "Learning and growth" section.
+- [ ] The graph link opens in a new tab — switch to it on screen when you click, don't just narrate over a blank tab.
+- [ ] If a call runs unusually slow (LLM provider hiccup), keep talking — restate the point in different words rather than going silent.
